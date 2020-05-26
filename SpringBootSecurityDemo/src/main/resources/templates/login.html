@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet">
+		
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>	
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
+	
+	<!-- Bootstrap Date-Picker Plugin -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+	
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+	
+  </head>
+  <body>
+  
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+
+    <div class="mx-auto order-0">
+       <label class="navbar-brand mb-0 h1">SPRING BOOT SECURITY DEMOS.</label>
+       <label style="font-weight:bold;color:blue;">Sign In</label>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+               <form class="form-inline justify-content-right" method="get" th:action="@{/index}">
+     			 <button class="btn btn-seconday my-2 my-sm-0" type="submit">Home</button>
+   			 </form>
+            </li>
+            
+            <li class="nav-item">
+               <form class="form-inline justify-content-right" method="get" th:action="@{/register}">
+     			 <button class="btn btn-primary my-2 my-sm-0" type="submit">Register</button>
+   			   </form>  			   
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<br/><br/>
+<!-- Login form -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+      	    <form th:action="@{/login}" method="post">
+                <h2>Please Sign Up <small>It's free. If you do not have an account, please register.</small></h2>
+                <div class="form-group">
+                    <input id="username" name="username" class="form-control form-control-lg rounded-0" placeholder="Username">
+                </div>
+    
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control form-control-lg rounded-0" placeholder="Password">
+                </div>
+    
+                <div class="form-check">
+                    <label class="form-check-label" for="remember-me">
+                       <input type="checkbox" id="remember-me" name="remember-me"> Remember me
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-block btn-lg btn-block">Sign In</button>               
+                </div>                   
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Login form -->
+
+</body>
+</html>

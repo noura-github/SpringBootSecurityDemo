@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Register Page</title>
+
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet">
+		
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	
+	<!-- Bootstrap Date-Picker Plugin -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+	
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+<!-- Main menu -->
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="mx-auto order-0">
+        <label class="navbar-brand mb-0 h1">SPRING BOOT SECURITY DEMOS.</label>
+        <label style="font-weight:bold;color:blue;">Register</label>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+               <form class="form-inline justify-content-right" method="get" th:action="@{/}">
+     			 <button class="btn btn-seconday my-2 my-sm-0" type="submit">Home</button>
+   			   </form>
+   			   
+            </li>
+           
+             <li class="nav-item">
+               <form class="form-inline justify-content-right" method="get" th:action="@{/login}">
+     			 <button class="btn btn-success my-2 my-sm-0" type="submit"><span class="glyphicon glyphicon-log-in"></span> Sign In</button>
+   			   </form> 
+            </li>
+
+        </ul>
+    </div>
+</nav>
+<!-- Main menu -->
+
+<br/><br/>
+
+<!-- Register form -->
+<div class="container">
+<div class="row justify-content-center">
+    <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+		<form method="post" action="#" th:action="@{/createUser}">
+			<h2>Please Register. <small>It's free.</small></h2><br>
+
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="firstname" class="title">First Name</label><span class="star"> *</span>
+						<input type="text" name="firstname" id="firstname"
+						 class="form-control input-lg" pattern="^[a-zA-Z]*$" required minlength="3">	
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="lastname" class="title">Last Name</label><span class="star"> *</span>
+						<input type="text" name="lastname" id="lastname" class="form-control input-lg" 
+							 pattern="^[a-zA-Z]*$" required minlength="3">
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="username" class="title">User Name</label><span class="star"> *</span>
+				<input type="text" name="username" id="username" class="form-control input-lg"
+				pattern="^([a-zA-Z0-9\-\.]+)$" required minlength="3" >
+			</div>
+			
+			<div class="alert alert-danger notification" role="alert" id="usernamestatus_div" style="display:none;">
+				<span id="usernamestatus_span"></span>
+			</div>
+
+			<script>
+
+				$(function(){
+				    $("#username").keyup(function(){
+				    	
+				    	var usernamefield = $('#username')[0]; //document.getElementById("username");
+				        var username = $('#username').val();
+				        var url = "/register/checkUsername/"+username;
+				        var data = {};
+				        data["username"] = username;
+				        $.ajax({
+				           type: "POST",
+				           url: url,
+
+				           data: data,
+				           contentType: 'text/plain',
+				           cache: false,
+				                
+				           success: function(msg){
+
+				               if (msg=="true"){
+				                	$("#usernamestatus_span").html('Username already exists');
+				                	$("#usernamestatus_div").css("display", "block");
+				                	
+				                	usernamefield.setCustomValidity("Username already exists");
+				                	
+				               } else {
+				                	$("#usernamestatus_span").html('');
+				                	$("#usernamestatus_div").css("display", "none");
+				                	
+				                	usernamefield.setCustomValidity("");
+				               } 		
+				           },
+				                    
+				           error: function() {
+				               console.log("Error occured");
+				           }
+				        });
+				    });
+				 });
+			</script>
+			
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 col-md-4">
+					<div class="form-group">
+						<label for="street" class="title">Street</label><span class="star"> *</span>
+						<input type="text" name="street" id="street" class="form-control input-lg" 
+						pattern="([^\s][A-z0-9À-ž\s]+)"  required minlength="3" >
+					</div>
+				</div>
+				
+				<div class="col-xs-12 col-sm-4 col-md-4">
+					<div class="form-group">
+						<label for="num" class="title">Number</label><span class="star"> *</span>
+						<input type="text" name="number" id="number" class="form-control input-lg" 
+						 pattern="^[0-9]*$" required>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-4 col-md-4">
+					<div class="form-group">
+						<label for="city" class="title">City</label><span class="star"> *</span>
+						<input type="text" name="city" id="city" class="form-control input-lg" 
+						 pattern="([^\s][A-z0-9À-ž\s]+)" required minlength="3" >
+					</div>
+				</div>
+				
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="state" class="title">State</label><span class="star"> *</span>
+						<div>
+							<select class="browser-default custom-select" name="state" id="state" required>
+								<option value="Burgenland">Burgenland</option>
+								<option value="Kärnten">Kärnten</option>
+								<option value="Niederösterreich">Niederösterreich</option>							 
+								<option value="Oberösterreich">Oberösterreich</option>
+								<option value="Salzburg">Salzburg</option>
+								<option value="Steiermark">Steiermark</option>
+								<option value="Tirol">Tirol</option>
+								<option value="Vorarlberg">Vorarlberg</option>
+								<option value="Wien">Wien</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="pincode" class="title">Pincode</label><span class="star"> *</span>
+						<input type="text" name="pincode" id="pincode" class="form-control input-lg" 
+						 pattern="^[0-9]*$" required minlength="3">
+					</div>
+				</div>
+			</div>
+				
+			<div class="form-group">
+	            <label for="date_of_birth" class="title">Date of Birth</label><span class="star"> *</span>
+	            <div class='input-group date' id='birthdatepicker'>
+	                <input type='text' class="form-control custom-datepicker" id="date_of_birth" 
+	               		name="date_of_birth" placeholder="yyyy-mm-dd" required/>
+	                <span class="input-group-addon">
+	                    <span class="glyphicon glyphicon-calendar"></span>
+	                </span>
+	            </div>
+	                <script type="text/javascript">
+			            $(function () {
+			                $('#birthdatepicker').datepicker({
+			                	format: 'yyyy-mm-dd',
+			                    endDate: '-18y',
+			                    autoclose: true
+			            	});
+			            });
+			        </script>
+	            </div>
+	            
+	            <div class="form-group">
+				<label for="email" class="title">Email Address</label><span class="star"> *</span>
+				<input type="email" name="email" id="email" class="form-control input-lg" required>
+			</div>
+
+			<div class="form-group">
+				<label for="phone" class="title">Phone Number</label><span class="star"> *</span>
+				<input type="text" name="phone" id="phone" class="form-control input-lg" required>
+			</div>
+			
+			<div class="form-group">
+				<div class="btn-group">
+					<label class="btn btn-primary">
+						<input type="radio" id="gender" name="gender" 
+						value="male" checked required/>
+						<span>Male</span>
+					</label>
+
+					<label class="btn btn-primary">
+						<input type="radio" id="gender" name="gender" value="female" />
+						<span>Female</span>
+					</label>
+			  </div>	
+			</div>
+			
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="password" class="title">Password</label><span class="star"> *</span>
+						<input type="password" name="password" id="password" class="form-control input-lg" 
+						oninput="document.getElementById('password_confirmation').pattern = this.value.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')" 
+						minlength="5" maxlength="10" required>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="password_confirmation" class="title">Confirm Password</label><span class="star"> *</span>
+						<input type="password" name="password_confirmation" id="password_confirmation" 
+						class="form-control input-lg" title="Fields must match" minlength="5" maxlength="10" required>
+					</div>
+				</div>
+			</div>
+			<div class="alert notification" role="alert" id="passwordMatchCheck_div">
+				<span id="passwordMatchCheck_span"></span>
+			</div>
+			
+				<script type="text/javascript">
+					$("#password_confirmation").keyup(function() {
+						
+				        var password = $("#password").val();
+				        
+				        $("#passwordMatchCheck").css({fontWeight: 'bold'});
+				        if (password == $(this).val()){
+				        	$("#passwordMatchCheck_span").html("* Passwords match");
+
+				        	$("#passwordMatchCheck_div").addClass("alert-success");			        	
+				        	$("#passwordMatchCheck_div").removeClass("alert-danger");
+				        	$("#passwordmatch").val("true");
+				        } else {
+				        	$("#passwordMatchCheck_span").html("* Passwords do not match");
+				           	$("#passwordMatchCheck_div").addClass("alert-danger");
+				           	$("#passwordMatchCheck_div").removeClass("alert-success");
+				           	
+				        	$("#passwordmatch").val("");
+				        }				       
+				    });
+			    </script>
+			
+			
+			<div class="row">
+				<div class="col-xs-4 col-sm-3 col-md-3">
+
+					<label class="form-check-label" for="acceptTerms">
+                       <input type="checkbox" id="acceptTerms" name="acceptTerms"> I Agree
+                    </label>
+				</div>
+				<div class="col-xs-8 col-sm-9 col-md-9">
+					 By clicking <strong class="label label-primary">Register</strong>, you agree to our
+					 <a href="#" data-toggle="modal" 
+                     data-target="#term_conds">Terms and Conditions.</a>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" value="Register" class="btn btn-primary btn-lg btn-block">
+			</div>
+		</form>
+	</div>
+	</div>
+</div>
+<!-- Register form -->
+
+
+
+
+
+
+<!-- Modal Terms & Conditions -->
+<div class="modal fade" id="term_conds" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
+				<h4 class="modal-title" id="modalLabel">Terms & Conditions</h4>
+			</div>
+			<div class="modal-body">
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p>
+				</div>
+			<div class="modal-footer">
+				<button type="button" id="agreeBtn" class="btn btn-primary" data-dismiss="modal">I Agree</button>
+				<script type="text/javascript">
+                    	$(document).ready(function(){
+                    	  $("#agreeBtn").click(function(){
+                    	  	//console.log("click");
+                    	    $("#acceptTerms").prop("checked", true);
+                    	  });
+
+                    	});
+			    </script>
+			   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal Terms & Conditions -->
+
+</body>
+</html>

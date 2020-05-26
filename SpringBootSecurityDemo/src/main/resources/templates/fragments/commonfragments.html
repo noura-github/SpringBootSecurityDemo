@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Fragments</title>
+
+
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet">
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	
+	
+	<!-- Bootstrap Date-Picker Plugin -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+
+<!-- Main content -->
+<div th:fragment="mainContent">
+<div class="container" th:if="${showmaincontent=='show'}">
+  <h2 th:text="'Welcome back ' + ${username} + '!'">Hell</h2>
+  <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+  At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+<br><br>
+
+<h2>Check your Emails, Notifications & Offers.</h2>
+<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Inbox
+    <span class="badge badge-primary badge-pill">8</span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+   Notifications
+    <span class="badge badge-primary badge-pill">25</span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+   Offers
+    <span class="badge badge-primary badge-pill">66</span>
+  </li>
+</ul>
+
+<br><br>
+ <h2>Your program today.</h2>
+ <ul class="list-group">
+  <li class="list-group-item disabled">Lorem ipsum dolor sit amet</li>
+  <li class="list-group-item">consetetur sadipscing elitr</li>
+  <li class="list-group-item">sed diam nonumy eirmod tempor invidunt</li>
+  <li class="list-group-item">Stet clita kasd gubergren</li>
+  <li class="list-group-item">no sea takimata sanctus est</li>
+</ul>
+
+</div>
+</div>
+<!-- Main content -->
+
+<!-- Current user info -->
+<div th:fragment="currentUserInfo">
+<div class="container" th:if="${currentuser!=null}">
+	  <h2>My Profile</h2>       
+	  <table class="table table-hover">
+	    <thead>
+	      <tr>
+	        <th>Firstname</th>
+	        <th>Lastname</th>
+	        <th>Email</th>
+	        <th>Phone</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+			<tr>
+			  	<td th:text="${currentuser.getFirstname()} + ' ' + ${currentuser.getLastname()}"></td>
+			    <td th:text="${currentuser.getGender()}"></td>
+			    <td th:text="${currentuser.getEmail()}"></td>
+			    <td th:text="${currentuser.getPhone()}"></td>
+			</tr>
+	    </tbody>
+	  </table>
+ </div>
+ </div>
+ <!-- Current user info -->
+
+
+
+<!-- Update profile info -->
+<div th:fragment="updateprofileInfo">
+
+<div class="container" th:if="${(updateprofile=='done')}">
+<div class="row justify-content-center">
+    <h1>Your profile update has been successfully done.</h1>
+</div>
+</div>
+
+<div class="container" th:if="${(updateprofile=='undone')}">
+<div class="row justify-content-center" style="color:red;">
+    <h1>Your profile update could not be done.</h1>
+</div>
+</div>
+</div>
+<!-- Update profile info -->
+
+<!-- Update Profile -->
+<div th:fragment="updateprofile">
+<div class="container" th:if="${(allowUpdateprofile=='ok')}">
+<div class="row justify-content-center">
+    <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+		<form method="post" th:action="@{${url}}"> <!-- action="/user/updateUser" -->
+			<h2>Update Profile. <small>Change one or many of the following properties.</small></h2><br>
+
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="firstname" class="title">First Name</label><span class="star"> *</span>
+						<input type="text" name="firstname" id="firstname" th:value="${updateuser.getFirstname()}"
+						 class="form-control input-lg" pattern="^[a-zA-Z]*$" minlength="3" required>	
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="lastname" class="title">Last Name</label><span class="star"> *</span>
+						<input type="text" name="lastname" id="lastname" th:value="${updateuser.getLastname()}"
+							class="form-control input-lg" pattern="^[a-zA-Z]*$" minlength="3" required>
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="username" class="title">User Name</label><span class="star"> *</span>
+				<input type="text" name="username" id="username" class="form-control input-lg" th:value="${updateuser.getUsername()}"
+				pattern="^([a-zA-Z0-9\-\.]+)$" minlength="4"  required>
+			</div>
+			
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 col-md-4">
+					<div class="form-group">
+						<label for="street" class="title">Street</label><span class="star"> *</span>
+						<input type="text" name="street" id="street" class="form-control input-lg"
+						th:value="${updateuser.getAddress().getStreet()}"
+						pattern="([^\s][A-z0-9À-ž\s]+)" minlength="3" required>
+					</div>
+				</div>
+				
+				<div class="col-xs-12 col-sm-4 col-md-4">
+					<div class="form-group">
+						<label for="num" class="title">Number</label><span class="star"> *</span>
+						<input type="text" name="number" id="number" class="form-control input-lg" 
+						th:value="${updateuser.getAddress().getNumber()}"
+						 pattern="^[0-9]*$">
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-4 col-md-4">
+					<div class="form-group">
+						<label for="city" class="title">City</label><span class="star"> *</span>
+						<input type="text" name="city" id="city" class="form-control input-lg" 
+							th:value="${updateuser.getAddress().getCity()}"
+							pattern="([^\s][A-z0-9À-ž\s]+)" minlength="3" required>
+					</div>
+				</div>
+				
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="state" class="title">State</label><span class="star"> *</span>
+
+						<div>
+						<select class="browser-default custom-select" name="state" id="state" 
+							
+							required>
+							<option value="Burgenland" th:selected="${updateuser.getAddress().getState()}=='Burgenland'">Burgenland</option>
+							<option value="Kärnten" th:selected="${updateuser.getAddress().getState()}=='Kärnten'">Kärnten</option>
+							<option value="Niederösterreich" th:selected="${updateuser.getAddress().getState()}=='Niederösterreich'">Niederösterreich</option>							 
+							<option value="Oberösterreich" th:selected="${updateuser.getAddress().getState()}=='Oberösterreich'">Oberösterreich</option>
+							<option value="Salzburg" th:selected="${updateuser.getAddress().getState()}=='Salzburg'">Salzburg</option>
+							<option value="Steiermark" th:selected="${updateuser.getAddress().getState()}=='Steiermark'">Steiermark</option>
+							<option value="Tirol" th:selected="${updateuser.getAddress().getState()}=='Tirol'">Tirol</option>
+							<option value="Vorarlberg" th:selected="${updateuser.getAddress().getState()}=='Vorarlberg'">Vorarlberg</option>
+							<option value="Wien" th:selected="${updateuser.getAddress().getState()}=='Wien'">Wien</option>
+						</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="pincode" class="title">Pincode</label><span class="star"> *</span>
+						<input type="text" name="pincode" id="pincode" class="form-control input-lg" 
+						 pattern="^[0-9]*$" minlength="3" th:value="${updateuser.getAddress().getPincode()}" required>
+					</div>
+				</div>
+
+
+				</div>
+				
+				<div class="form-group">
+				    <label for="date_of_birth" class="title">Date of Birth</label><span class="star"> *</span>
+	                <div class='input-group date' id='birthdatepicker'>
+	                    <input type='text' class="form-control custom-datepicker" id="date_of_birth" 
+	                    		name="date_of_birth" placeholder="yyyy-mm-dd" 
+	                    		th:value="${date_of_birth}"  required/>
+	                    <span class="input-group-addon">
+	                        <span class="glyphicon glyphicon-calendar"></span>
+	                    </span>
+	                </div>
+	                <script type="text/javascript">
+			            $(function () {
+			                $('#birthdatepicker').datepicker({
+			                	format: 'yyyy-mm-dd',
+			                    endDate: '-18y',
+			                    autoclose: true
+			            	});
+			            });
+			        </script>
+	            </div>
+	            
+	            <div class="form-group">
+				<label for="email" class="title">Email Address</label><span class="star"> *</span>
+				<input type="email" name="email" id="email" class="form-control input-lg" 
+				th:value="${updateuser.getEmail()}"  required>
+			</div>
+
+			<div class="form-group">
+				<label for="phone" class="title">Phone Number</label>
+				<input type="text" name="phone" id="phone" class="form-control input-lg" 
+				th:value="${updateuser.getPhone()}"  required>
+			</div>
+			
+			<div class="form-group">
+				<div class="btn-group">
+					<label class="btn btn-primary">
+						<input type="radio" id="gender" name="gender" th:checked="${updateuser.getGender()=='male'}" 
+						value="male"  required/>
+						<span>Male</span>
+					</label>
+
+					<label class="btn btn-primary">
+						<input type="radio" id="gender" name="gender" value="female" th:checked="${updateuser.getGender()=='female'}"/>
+						<span>Female</span>
+					</label>
+			  </div>	
+			</div>
+			
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="password" class="title">Password</label><span class="star"> *</span>
+						<input type="password" name="password" id="password" class="form-control input-lg" 
+						th:value="${updateuser.getPassword()}" minlength="5" maxlength="10" 
+						oninput="document.getElementById('password_confirmation').pattern = this.value.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')" required>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label for="password_confirmation" class="title">Confirm Password</label><span class="star"> *</span>
+						<input type="password" name="password_confirmation" id="password_confirmation" 
+						class="form-control input-lg" 
+						th:value="${updateuser.getPassword()}" minlength="5" maxlength="10" required>
+					</div>
+				</div>
+				
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<label id="passwordMatchCheck"></label>
+					</div>
+				</div>
+
+				<script type="text/javascript">
+					$("#password_confirmation").keyup(function() {
+						
+				        var password = $("#password").val();
+				        
+				        $("#passwordMatchCheck").css({fontWeight: 'bold'});
+				        if (password == $(this).val()){
+				        	
+				        	$("#passwordMatchCheck").html("* Passwords match");
+				        	$("#passwordMatchCheck").css({color: 'green'});
+				        	
+				        	$("#passwordmatch").val("true");
+				        	
+				        	
+				        } else {
+				        	$("#passwordMatchCheck").html("* Passwords do not match");
+				           	$("#passwordMatchCheck").css({color: 'red'});
+				        	$("#passwordmatch").val("");
+				        }				       
+				    });
+			    </script>
+			</div>
+	
+			
+			<div class="form-group">
+				<input type="submit" value="Update" class="btn btn-primary btn-lg btn-block">
+			</div>
+		</form>
+	</div>
+	</div>
+</div>
+</div>
+<!-- Update Profile -->
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>User Home</title>
+
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet">
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+		
+	<!-- Bootstrap Date-Picker Plugin -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="mx-auto order-0">
+        <label class="navbar-brand mb-0 h1" th:text="${userrole} + ' ' + HOME."></label>
+        <label class="glyphicon glyphicon-user" style="font-weight:bold;color:blue;" th:text="${username}"></label>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+               
+               <div class="dropdown">
+				  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" 
+				  	data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile
+				  </button>
+				  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+				 	 <form class="form-inline" method="get" th:action="@{/user/getUser}">
+				    	<button class="dropdown-item" type="submit">View</button>
+				     </form>				 
+				     <form class="form-inline" method="get" th:action="@{/user/allowUpdateUser}">
+				     	<button class="dropdown-item" type="submit">Update</button>
+				     </form>
+				  </div>
+				</div>
+            </li>
+           
+           	<li class="nav-item">     
+		     <form class="form-inline" method="get" th:action="@{/user/}">
+		      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Main</button>
+		    </form>
+            </li>
+            
+            <li class="nav-item">              
+		     <form class="form-inline" method="get" th:action="@{/logout}">
+		      <button class="btn btn-secondary my-2 my-sm-0" type="submit"><span class="glyphicon glyphicon-log-out"></span> Sign Out</button>
+		    </form>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+
+<br/><br/>
+ <!-- Main content -->
+ <header th:insert="fragments/commonfragments.html :: mainContent"></header>
+ <!-- Main content -->
+
+ <!-- Current user info -->
+ <header th:insert="fragments/commonfragments.html :: currentUserInfo"></header>
+ <!-- Current user info -->
+ 
+
+ <!-- Update profile info -->
+ <header th:insert="fragments/commonfragments.html :: updateprofileInfo"></header>
+ <!-- Update profile info --> 
+ 
+ <!-- Update profile -->
+ <header th:insert="fragments/commonfragments.html :: updateprofile(url='/user/updateUser')"></header>
+ <!-- Update profile -->
+
+</body>
+</html>

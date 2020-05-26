@@ -1,0 +1,54 @@
+html, body{
+	background-color:#F5F5F5;
+}
+
+.usersTable {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.usersTable td, .usersTable th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.usersTable tr:nth-child(even){background-color: #f2f2f2;}
+
+.usersTable tr:hover {background-color: #ddd;}
+
+.usersTable th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #1E90FF;
+  color: white;
+  font-weight:bold;
+}
+
+
+.star{
+  color:red;font-weight:bold;
+}
+
+.title{
+  color:black;font-weight:bold;
+}
+ 
+  
+.custom-select{
+	color: #555;
+	width: 100%;
+	height: 38px;
+	line-height: 1.3333333;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+}
+
+.custom-datepicker {
+	height:46px;
+}
+
+li {
+  margin: 10px 5px;
+}
