@@ -1,5 +1,6 @@
 package technou.com.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,8 +19,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name="role")
-public class Role {
+public class Role implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "roleId", unique = true, nullable = false)
@@ -31,6 +37,6 @@ public class Role {
     @Column(name = "role"/*, unique=false*/)
 	private String role;
 
-    @ManyToMany(mappedBy="roles", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy="roles", fetch = FetchType.EAGER)
     private Set<User> users = new HashSet<User>();
 }

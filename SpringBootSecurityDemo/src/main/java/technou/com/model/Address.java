@@ -1,5 +1,7 @@
 package technou.com.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,9 +19,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Embeddable
-public class Address {
+public class Address implements Serializable{
 	
-    @NotBlank(message = "Street is mandatory")
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@NotBlank(message = "Street is mandatory")
 	private String street;
     
     @NotNull(message = "Number is mandatory")

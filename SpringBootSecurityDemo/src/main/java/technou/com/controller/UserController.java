@@ -3,34 +3,29 @@ package technou.com.controller;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import technou.com.authority.AppUserDetails;
 import technou.com.configuration.AppUserRole;
 import technou.com.dao.UsersRepository;
 import technou.com.model.Address;
 import technou.com.model.User;
-import technou.com.service.AppUserDetailsService;
 import technou.com.service.AppUserService;
 
 @Controller
 @RequestMapping("/user")
+@SessionAttributes({"username", "userrole"})
 public class UserController {
 
 	@Autowired
@@ -41,39 +36,38 @@ public class UserController {
 	
 	@GetMapping
 	@PreAuthorize("hasAnyRole('ROLE_USER')")
-	public String getUserView(Model model) {
+	public String getUserView(Model model, HttpServletRequest request) {
 		
 		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
-
-		model.addAttribute("username", userDetails.getUsername());
-		model.addAttribute("userrole", userrole.toUpperCase());
-		model.addAttribute("showmaincontent", "show");
-					
-		return "userhome";
-	}
-
-	@GetMapping(path = "/getUser")
-	@PreAuthorize("hasAnyRole('ROLE_USER')")
-	public String getUser(Model model) {
-
-		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
+		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities()).toUpperCase();
 		
 		String username = userDetails.getUsername();
 		
-		Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
+		Optional<User> user = userRepository.findByUsername(username);
 		
 		if (!user.isPresent()) {			
 			user.orElseThrow(()->new UsernameNotFoundException(String.format("User % not found", username)));			
 		}
 		
 		User currentuser = user.get();
+		
 
-		model.addAttribute("username", userDetails.getUsername());
-		model.addAttribute("userrole", userrole.toUpperCase());
-
+		model.addAttribute("username", username);
+		model.addAttribute("userrole", userrole);
+		model.addAttribute("showmaincontent", "show");
+		
 		model.addAttribute("currentuser", currentuser);
+		
+		request.getSession().setAttribute("currentuser", currentuser);
+					
+		return "userhome";
+	}
+
+	@GetMapping(path = "/getUser")
+	@PreAuthorize("hasAnyRole('ROLE_USER')")
+	public String getUser(Model model, HttpServletRequest request) {
+
+		model.addAttribute("currentuser", request.getSession().getAttribute("currentuser"));
 
 		return "userhome";
 	}
@@ -81,32 +75,16 @@ public class UserController {
 	
 	@GetMapping("/allowUpdateUser")
 	@PreAuthorize("hasAnyRole('ROLE_USER')")
-	public String allowUpdateUser(Model model, User user, Address address) {
+	public String allowUpdateUser(Model model, User user, Address address, HttpServletRequest request) {
 
-		
-		
-		
-		
-		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
-		String username = userDetails.getUsername();
-		
-
-		
-		Optional<User> currentuser = userRepository.findByUsername(username);
-		
-		if (!currentuser.isPresent()) {			
-			currentuser.orElseThrow(()->new UsernameNotFoundException(String.format("User % not found", username)));			
-		}
-		
+		User currentuser = (User)request.getSession().getAttribute("currentuser");
 	
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
-		String date_of_birth = formatter.format(currentuser.get().getDate_of_birth().getTime());
+		String date_of_birth = formatter.format(currentuser.getDate_of_birth().getTime());
 		
 		model.addAttribute("allowUpdateprofile", "ok");
-		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());
-		model.addAttribute("updateuser", currentuser.get());
+
+		model.addAttribute("updateuser", currentuser);
 		model.addAttribute("date_of_birth", date_of_birth);
    
         return "userhome";
@@ -115,13 +93,9 @@ public class UserController {
 	
 	@PostMapping("/updateUser")
 	@PreAuthorize("hasAnyRole('ROLE_USER')")
-	public String updateUser(Model model, User user, Address address) {
+	public String updateUser(Model model, User user, Address address, HttpServletRequest request) {
 		
 		user.setAddress(address);
-
-		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
-		String username = userDetails.getUsername();
 		
 		boolean crypt = user.getPassword().length()<=10?true:false;
 		
@@ -133,9 +107,8 @@ public class UserController {
 			model.addAttribute("updateprofile", "undone");
 		}
 		
-		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());
-    
+		request.getSession().setAttribute("currentuser", user);
+
         return "userhome";
     }
 }

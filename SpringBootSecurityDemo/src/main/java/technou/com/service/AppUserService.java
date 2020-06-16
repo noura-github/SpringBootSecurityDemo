@@ -48,7 +48,7 @@ public class AppUserService implements UserService{
 		
 		if (user.isPresent()) {
 			
-			usersRepository.delete(user.get());
+			usersRepository.deleteById(user.get().getUserId());
 			
 			return true;
 		}
@@ -58,8 +58,8 @@ public class AppUserService implements UserService{
 	
 	@Override
 	public boolean update(User user, boolean crypt) {
-
-		Optional<User> userdbOpt = usersRepository.findByUsername(user.getUsername());
+	
+		Optional<User> userdbOpt = usersRepository.findById(user.getUserId());
 		
 		if (userdbOpt.isPresent()) {
 			
@@ -84,8 +84,10 @@ public class AppUserService implements UserService{
 			}
 		
 			userdb.setAcceptTerms(true);
+			
+			System.out.println("##############userdb.getAddress().getCity()="+userdb.getAddress().getCity());
 
-			userdb = usersRepository.save(userdb);
+			userdb = usersRepository.saveAndFlush(userdb);
 			
 			return (userdb!=null);
 		}

@@ -1,5 +1,6 @@
 package technou.com.model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,8 +40,13 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name="user")
-public class User {
+public class User implements Serializable{
 	
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 		@Id
 	    @Column(name = "userId", unique = true, nullable = false)
 	    @GeneratedValue

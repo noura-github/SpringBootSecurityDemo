@@ -189,9 +189,11 @@
                     			var value = event.target.id;
                     	  		var classList = event.target.classList;                   	  		
                     	  		if (classList.contains('deleteName')){   
-                        	  		$("#deleteusername").val(value);                       	  		
+                        	  		$("#deleteusername").val(value);    
+                        	  		$("#updateroleusername").val(null);
                     	  		} else if (classList.contains('updateRole')){
                     	  			$("#updateroleusername").val(value);
+                    	  			$("#deleteusername").val(null); 
                     	  		}
                     	  });
                     	});

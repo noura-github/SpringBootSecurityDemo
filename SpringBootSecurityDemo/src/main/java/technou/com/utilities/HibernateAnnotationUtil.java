@@ -28,21 +28,4 @@ public class HibernateAnnotationUtil {
 	    return sessionFactory;
 	}
 	//-----------------------------------------------------
-	
-	/*protected void setup() {
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-				.configure() // configures settings from hibernate.cfg.xml
-				.build(); //build StandardServiceRegistry
-		try {
-			sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			StandardServiceRegistryBuilder.destroy(registry);
-		}
-	}
-
-	//---------------------------------------------------------------------------------
-	protected void exit() {
-		sessionFactory.close();
-	}*/
 }

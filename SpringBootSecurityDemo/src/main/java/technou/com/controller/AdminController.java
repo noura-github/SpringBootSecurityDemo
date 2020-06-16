@@ -5,7 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import technou.com.authority.AppUserDetails;
 import technou.com.configuration.AppUserRole;
@@ -26,7 +30,10 @@ import technou.com.service.AppUserService;
 
 @Controller
 @RequestMapping("admin")
+@SessionAttributes({"username", "userrole"})
+@Scope(value="session")
 public class AdminController {
+
 	
 	@Autowired
 	private UsersRepository userRepository;
@@ -36,30 +43,13 @@ public class AdminController {
 
 	@GetMapping("/") 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
-	public String getAdminView(Model model) { 
+	public String getAdminView(Model model, HttpServletRequest request) { 
 		
 		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
+		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities()).toUpperCase();
 		
 		String username = userDetails.getUsername();
-
-		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());
-		model.addAttribute("showmaincontent", "show");
-
-		return "adminhome";
-	}
-	
-	
-	@GetMapping(path = "/getAdminUser")
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
-	public String getUser(Model model) {
-
-		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
 		
-		String username = userDetails.getUsername();
-
 		Optional<User> user = userRepository.findByUsername(username);
 		
 		if (!user.isPresent()) {			
@@ -67,10 +57,23 @@ public class AdminController {
 		}
 		
 		User currentuser = user.get();
-
+		
 		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());
-		model.addAttribute("currentuser", currentuser);
+		model.addAttribute("userrole", userrole);
+		model.addAttribute("showmaincontent", "show");
+		
+		request.getSession().setAttribute("currentuser", currentuser);
+		
+
+		return "adminhome";
+	}
+	
+	
+	@GetMapping(path = "/getAdminUser")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
+	public String getUser(Model model, HttpServletRequest request) {
+		
+		model.addAttribute("currentuser", request.getSession().getAttribute("currentuser"));
 			
 		return "adminhome";
 	}
@@ -79,15 +82,8 @@ public class AdminController {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
 	public String geLookedupUser(Model model, @RequestParam String searchusername) {
 
-		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
-		
-		String username = userDetails.getUsername();
 		
 		List<User> lookedupusers = userRepository.findBySearchusername(searchusername);
-
-		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());		
 		
 		model.addAttribute("lookedupusers", lookedupusers);
 		model.addAttribute("matchfound", String.valueOf(lookedupusers.size()));
@@ -98,26 +94,17 @@ public class AdminController {
 		return "adminhome";
 	}
 	
-
-	@GetMapping("allUsers")
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
-	public List<User> getAllUsers() {
-
-		return userRepository.findAll();
-	}
 	
 	@GetMapping("getAllUsers")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
 	public String showAllUsers(Model model) {
 
 		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
 		
-		String username = userDetails.getUsername();
+		String username = userDetails.getUsername();	
+		
 		List<User> refinedUsers = appUserService.usersWithoutCurrentUser(username);
 
-		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());		
 		model.addAttribute("allusers", refinedUsers);
 		
 		return "adminhome";
@@ -126,29 +113,18 @@ public class AdminController {
 
 	@GetMapping("/allowUpdateAdminUser")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
-	public String allowUpdateAdminUser(Model model, User user, Address address) {
+	public String allowUpdateAdminUser(Model model, HttpServletRequest request, User user, Address address) {
 		
-		
-		
-		
-		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
-		String username = userDetails.getUsername();
-		
-		
-		Optional<User> currentuser = userRepository.findByUsername(username);
-		
-		if (!currentuser.isPresent()) {			
-			currentuser.orElseThrow(()->new UsernameNotFoundException(String.format("User % not found", username)));			
-		}
+
+		User currentuser = (User)request.getSession().getAttribute("currentuser");
+		model.addAttribute("currentuser", currentuser);
 				
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
-		String date_of_birth = formatter.format(currentuser.get().getDate_of_birth().getTime());
+		String date_of_birth = formatter.format(currentuser.getDate_of_birth().getTime());
 		
 		model.addAttribute("allowUpdateprofile", "ok");
-		model.addAttribute("updateuser", currentuser.get());
-		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());
+		model.addAttribute("updateuser", currentuser);
+		
 		model.addAttribute("date_of_birth", date_of_birth);
    
         return "adminhome";
@@ -157,13 +133,9 @@ public class AdminController {
 	
 	@PostMapping("/updateAdminUser")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
-	public String updateAdminUser(Model model, User user, Address address) {
+	public String updateAdminUser(Model model, HttpServletRequest request, User user, Address address) {
 		
 		user.setAddress(address);
-
-		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
-		String username = userDetails.getUsername();
 		
 		boolean crypt = user.getPassword().length()<=10?true:false;
 		
@@ -175,9 +147,7 @@ public class AdminController {
 			model.addAttribute("updateprofile", "undone");
 		}
 		
-		
-		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());
+		request.getSession().setAttribute("currentuser", user);
     
         return "adminhome";
     }
@@ -187,12 +157,9 @@ public class AdminController {
 	@PreAuthorize("hasAuthority('user:write')")
 	public String updateUserRole(Model model, String updateroleusername, String updaterole) {
 		
-
 		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
 		String username = userDetails.getUsername();
-		
-		
+			
 		Role role = new Role();
 		role.setRole(updaterole);
 		HashSet<Role> roles = new HashSet<Role>();
@@ -201,9 +168,6 @@ public class AdminController {
 		appUserService.updateUserRole(updateroleusername, roles);
 		
 		List<User> refinedUsers = appUserService.usersWithoutCurrentUser(username);		
-				
-		model.addAttribute("username", username);
-		model.addAttribute("userrole", userrole.toUpperCase());
 		model.addAttribute("allusers", refinedUsers);
     
         return "adminhome";
@@ -215,18 +179,14 @@ public class AdminController {
 	public String deleteUser(Model model, String deleteusername) {
 		
 		AppUserDetails userDetails = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userrole = AppUserRole.getRoleFromGrantedAuthorities(userDetails.getAuthorities());
-		
+
 		String username = userDetails.getUsername();
 		
 		boolean isDeleted = appUserService.delete(deleteusername);
-		
-		List<User> refinedUsers = appUserService.usersWithoutCurrentUser(username);
-		
-		model.addAttribute("username", userDetails.getUsername());
-		model.addAttribute("userrole", userrole.toUpperCase());
 
 		model.addAttribute("userdeleted", isDeleted);
+			
+		List<User> refinedUsers = appUserService.usersWithoutCurrentUser(username);
 		model.addAttribute("allusers", refinedUsers);
     
         return "adminhome";
