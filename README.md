@@ -1,6 +1,10 @@
 # SpringBootSecurityDemo
 A demo of Spring Boot Security
 
+Main Used Tools
+Java 8, Spring Boot (Security, JPA), Hibernate, MySql
+IDE: Eclipse
+
 How to run this project?
 
 To execute this project, follow the few coming steps:
