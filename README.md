@@ -21,3 +21,6 @@ Run now the whole project as 'Spring Boot App'.
 
 Open in a browser the Url 'http://localhost:8080/index' to start the web-app.
 
+
+Contact
+For any question or feedback, feel free to contact me on my email:bensaber.technou@yahoo.com
