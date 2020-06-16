@@ -9,8 +9,9 @@ This project needs a MySql database (of users and their roles). To create it, ac
 
 Run this class as 'Java Application'.
 
-After successfully creating the database (named 'usersmanagement') with some users and their roles, disable again this main method. you will not need it later.
+After successfully creating the database (named 'usersmanagement') with some users and their roles, disable again this main method. You will not need it later.
 
 Run now the whole project as 'Spring Boot App'.
 
 Open in a browser the Url 'http://localhost:8080/index' to start the web-app.
+
