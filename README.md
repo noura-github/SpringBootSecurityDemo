@@ -3,8 +3,8 @@ A demo of Spring Boot Security
 
 Main Used Tools
 
-Java 8, Spring Boot (Security, JPA), Hibernate, MySql
-IDE: Eclipse
+Java 8, Spring Boot (Security, JPA), Hibernate, MySql.
+IDE: Eclipse.
 
 
 How to run this project?
